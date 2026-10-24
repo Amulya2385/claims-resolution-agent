@@ -191,3 +191,175 @@ class LedgerEntry(Base):
         DateTime(timezone=True),
         nullable=False,
     )
+
+
+class Customer(Base):
+    __tablename__ = "customers"
+
+    customer_id: Mapped[str] = mapped_column(
+        String(64),
+        primary_key=True,
+    )
+
+    approved_refunds_trailing_90d: Mapped[int] = mapped_column(
+        Integer,
+        nullable=False,
+        default=0,
+    )
+
+
+class AgentRun(Base):
+    __tablename__ = "agent_runs"
+
+    run_id: Mapped[str] = mapped_column(
+        String(64),
+        primary_key=True,
+    )
+    claim_id: Mapped[str] = mapped_column(
+        ForeignKey("claims.claim_id"),
+        nullable=False,
+        index=True,
+    )
+    status: Mapped[str] = mapped_column(
+        String(32),
+        nullable=False,
+    )
+    started_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+    )
+    completed_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True),
+        nullable=True,
+    )
+    error_message: Mapped[str | None] = mapped_column(
+        Text,
+        nullable=True,
+    )
+
+    claim: Mapped["Claim"] = relationship()
+
+
+class Decision(Base):
+    __tablename__ = "decisions"
+
+    decision_id: Mapped[str] = mapped_column(
+        String(64),
+        primary_key=True,
+    )
+    run_id: Mapped[str] = mapped_column(
+        ForeignKey("agent_runs.run_id"),
+        nullable=False,
+        index=True,
+    )
+    claim_id: Mapped[str] = mapped_column(
+        ForeignKey("claims.claim_id"),
+        nullable=False,
+        index=True,
+    )
+    tier: Mapped[str] = mapped_column(
+        String(32),
+        nullable=False,
+    )
+    recommendation: Mapped[str] = mapped_column(
+        String(64),
+        nullable=False,
+    )
+    reasons: Mapped[str] = mapped_column(
+        Text,
+        nullable=False,
+    )
+    policy_clause: Mapped[str] = mapped_column(
+        String(256),
+        nullable=False,
+    )
+    status: Mapped[str] = mapped_column(
+        String(32),
+        nullable=False,
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+    )
+
+
+class AuditEvent(Base):
+    __tablename__ = "audit_events"
+
+    event_id: Mapped[str] = mapped_column(
+        String(64),
+        primary_key=True,
+    )
+    claim_id: Mapped[str] = mapped_column(
+        ForeignKey("claims.claim_id"),
+        nullable=False,
+        index=True,
+    )
+    run_id: Mapped[str | None] = mapped_column(
+        ForeignKey("agent_runs.run_id"),
+        nullable=True,
+        index=True,
+    )
+    event_type: Mapped[str] = mapped_column(
+        String(64),
+        nullable=False,
+    )
+    actor_type: Mapped[str] = mapped_column(
+        String(32),
+        nullable=False,
+    )
+    actor_id: Mapped[str | None] = mapped_column(
+        String(128),
+        nullable=True,
+    )
+    payload: Mapped[str] = mapped_column(
+        Text,
+        nullable=False,
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+    )
+
+
+class Evaluation(Base):
+    __tablename__ = "evaluations"
+
+    evaluation_id: Mapped[str] = mapped_column(
+        String(64),
+        primary_key=True,
+    )
+    claim_id: Mapped[str] = mapped_column(
+        ForeignKey("claims.claim_id"),
+        nullable=False,
+        index=True,
+    )
+    run_id: Mapped[str | None] = mapped_column(
+        ForeignKey("agent_runs.run_id"),
+        nullable=True,
+        index=True,
+    )
+    evaluator_type: Mapped[str] = mapped_column(
+        String(32),
+        nullable=False,
+    )
+    metric: Mapped[str] = mapped_column(
+        String(64),
+        nullable=False,
+    )
+    score: Mapped[float] = mapped_column(
+        Float,
+        nullable=False,
+    )
+    passed: Mapped[bool] = mapped_column(
+        Boolean,
+        nullable=False,
+    )
+    details: Mapped[str] = mapped_column(
+        Text,
+        nullable=False,
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+    )
