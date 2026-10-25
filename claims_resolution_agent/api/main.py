@@ -1,5 +1,9 @@
+
 from fastapi import FastAPI
 
+from claims_resolution_agent.api.routes.agent_execution import (
+    router as agent_execution_router,
+)
 from claims_resolution_agent.api.routes.agent_runs import (
     router as agent_runs_router,
 )
@@ -43,6 +47,7 @@ app.include_router(approvals_router)
 app.include_router(customers_router)
 app.include_router(policies_router)
 app.include_router(agent_runs_router)
+app.include_router(agent_execution_router)
 app.include_router(decisions_router)
 app.include_router(audit_events_router)
 app.include_router(evaluations_router)

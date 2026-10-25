@@ -10,3 +10,6 @@ pytest==9.1.1
 
 fastapi==0.121.0
 uvicorn==0.38.0
+
+langgraph==1.0.3
+openai==2.6.1
